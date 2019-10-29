@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "119777601957",
+    "firebase_url": "https://huesec-d843d.firebaseio.com",
+    "project_id": "huesec-d843d",
+    "storage_bucket": "huesec-d843d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119777601957:android:6fff7d52ff570e053d604c",
+        "android_client_info": {
+          "package_name": "com.tuononen.petteri.phuesensor"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "119777601957-83aetgiqashr251rv48kd3vjmqpvck7j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyABAOL041EkAMlnhy9D6_U2LwT-uGEr_oI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "119777601957-83aetgiqashr251rv48kd3vjmqpvck7j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

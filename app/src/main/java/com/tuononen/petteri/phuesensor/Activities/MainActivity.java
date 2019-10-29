@@ -1,15 +1,12 @@
 package com.tuononen.petteri.phuesensor;
 
-import android.bluetooth.BluetoothClass;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com._8rine.upnpdiscovery.UPnPDevice;
-import com._8rine.upnpdiscovery.UPnPDiscovery;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -23,13 +20,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements APIcallback {
+
 
     final static String TAG = "API";
 
@@ -42,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
 
         textView = findViewById(R.id.labelSensor);
@@ -93,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
     }
 
     public void onClickNext(View view){
-        Intent intent = new Intent(this,Main2Activity.class);
-        startActivity(intent);
+
+        apiGetCall("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/sensors");
     }
 
     public void onClickDevices(View view){

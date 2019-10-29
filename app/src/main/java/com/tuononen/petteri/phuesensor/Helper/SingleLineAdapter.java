@@ -16,7 +16,7 @@ import java.util.List;
 class SingleLineAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
-    private List<UPnPDevice> devices;
+    public static List<UPnPDevice> devices;
 
 
     public SingleLineAdapter(Context context) {
@@ -56,8 +56,10 @@ class SingleLineAdapter extends BaseAdapter {
 
         TextView textTodoTitle = view.findViewById(R.id.list_devices_title);
         TextView textfound = view.findViewById(R.id.list_devices_status);
+        TextView textIP = view.findViewById(R.id.list_devices_ip);
 
         textTodoTitle.setText(devices.get(position).getFriendlyName());
+        textIP.setText(devices.get(position).getHostAddress());
         textfound.setText("Found1");
 
 
