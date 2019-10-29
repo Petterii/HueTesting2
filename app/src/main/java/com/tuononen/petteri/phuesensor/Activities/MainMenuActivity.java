@@ -3,36 +3,14 @@ package com.tuononen.petteri.phuesensor.Activities;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.tuononen.petteri.phuesensor.Helper.APIcallback;
-import com.tuononen.petteri.phuesensor.Helper.FirebaseFunctions;
-import com.tuononen.petteri.phuesensor.Helper.MySingleton;
 import com.tuononen.petteri.phuesensor.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+public class MainMenuActivity extends AppCompatActivity {
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class MainActivity extends AppCompatActivity implements APIcallback {
-
-
+/*
     final static String TAG = "API";
     private MySingleton store;
     FirebaseFunctions db;
@@ -42,10 +20,14 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
 // https://www.meethue.com/api/nupnp // maybe in debugger
     String bridgeIPGetURL = "https://discovery.meethue.com ";
     final String TESTAPI = "http://www.google.com";
+*/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_mainmenu);
+
+        initButtons();
+        /*
         light1 = true;
         db = new FirebaseFunctions();
         store = MySingleton.getInstance();
@@ -59,8 +41,31 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
       //  searchPNPDevices();
        // apiGetCall(TESTAPI);
       // textPost();
+      */
     }
 
+    private void initButtons() {
+
+        Button setupButton = (Button) findViewById(R.id.mainmenu_homesetup);
+
+        setupButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainMenuActivity.this,HomeSetupActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button sensorButton = (Button) findViewById(R.id.mainmenu_homeactivation);
+
+        sensorButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MainMenuActivity.this,SensorActivationActivity.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+/*
     private void textPost(String url) {
         try{
             jsonApiCall(url);
@@ -203,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
 
 
     public void onClickDevices(View view){
-        Intent intent = new Intent(this,ListDevicesActivity.class);
+        Intent intent = new Intent(this, HomeSetupActivity.class);
         startActivity(intent);
     }
 
@@ -273,4 +278,5 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
             apiGetCallSensor("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/sensors/24" , "sensors");
         }
     }
+*/
 }

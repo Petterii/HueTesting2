@@ -11,10 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.ListSensorsActivity"></activity>
-        <activity android:name=".Activities.ListDevicesActivity" />
+        <activity android:name=".Activities.SensorActivationActivity"></activity>
+        <activity android:name=".Activities.HomeSetupActivity" />
         <activity android:name=".Activities.Main2Activity" />
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.MainMenuActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
