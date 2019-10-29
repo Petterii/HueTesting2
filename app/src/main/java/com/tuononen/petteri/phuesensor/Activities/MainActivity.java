@@ -1,4 +1,4 @@
-package com.tuononen.petteri.phuesensor;
+package com.tuononen.petteri.phuesensor.Activities;
 
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,21 +15,30 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.tuononen.petteri.phuesensor.Helper.APIcallback;
+import com.tuononen.petteri.phuesensor.Helper.FirebaseFunctions;
+import com.tuononen.petteri.phuesensor.Helper.MySingleton;
+import com.tuononen.petteri.phuesensor.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements APIcallback {
 
 
     final static String TAG = "API";
-
+    private MySingleton store;
+    FirebaseFunctions db;
     TextView textView;
     TextView textView2;
+    private TextView bridgeCon;
 // https://www.meethue.com/api/nupnp // maybe in debugger
     String bridgeIPGetURL = "https://discovery.meethue.com ";
     final String TESTAPI = "http://www.google.com";
@@ -37,38 +46,76 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
+        light1 = true;
+        db = new FirebaseFunctions();
+        store = MySingleton.getInstance();
 
         textView = findViewById(R.id.labelSensor);
         textView2 = findViewById(R.id.lightLabel);
+        bridgeCon = findViewById(R.id.philipHueStatus);
 
-
+        if (store.getCurrentBridgeDevice() != null)
+            bridgeCon.setText("OK. "+store.getCurrentBridgeDevice().getHostAddress());
       //  searchPNPDevices();
        // apiGetCall(TESTAPI);
       // textPost();
     }
 
-    private void textPost() {
+    private void textPost(String url) {
         try{
-            jsonApiCall("");
+            jsonApiCall(url);
         }catch (Exception e){
             Log.d(TAG, "jsonAPI: "+e);
         }
     }
 
-    public void apiGetCall(String url){
+    public void mapIterator(String jsonString){
+
+        try {
+
+            JSONObject jsonObject = new JSONObject(jsonString);
+            JSONObject jState = new JSONObject(jsonObject.get("state").toString());
+            boolean pree = (boolean)jState.get("presence");
+            //JSONObject lights = jsonObject.getJSONObject(type1);
+
+            Iterator<String> keyIterator = jsonObject.keys();
+
+            while (keyIterator.hasNext()) {
+                String key = keyIterator.next();
+                JSONObject l = jsonObject.getJSONObject(key);
+
+                boolean pres = true;
+                String state;
+
+                  //  state = l.getString("state");
+                  //  JSONObject stateObject = new JSONObject(state);
+                    pres = l.getBoolean("presence");
+                    textView2.setText(""+pres);
+                    state = "ring";
+                    state = "ding";
+
+                // String state = l.getString("state");
+
+            }
+        }catch (Exception e){
+            Log.d("API", "mapIterator: catch Error" + e);
+        }
+    }
+
+    public void apiGetCall(String url,final String devices){
         // Instantiate the RequestQueue.
         RequestQueue queue = Volley.newRequestQueue(this);
         //url ="http://www.google.com";
 
         // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url+devices,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        textView.setText("Response is: "+ response.substring(0,10));
+                        mapIterator(response.toString());
+
+                       // textView.setText("Response is: "+ response.substring(0,10));
 
                         ApiRequestResult(response);
                     }
@@ -88,27 +135,89 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
 
     }
 
-    public void onClickNext(View view){
-
-        apiGetCall("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/sensors");
+    public void onClickGetLight(View view){
+        apiGetCall("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ" , "lights");
     }
+
+    public void onClickGetSensor(View view){
+        Timer timer = new Timer(true);
+        timer.schedule(new UpdateSensor(), 0,700);
+
+
+
+
+    }
+
+    private void apiGetCallSensor(String s, final String sensors) {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(this);
+        //url ="http://www.google.com";
+
+        // Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, s,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        // Display the first 500 characters of the response string.
+                        response1 = response;
+
+                        try {
+
+                            JSONObject jsonObject = new JSONObject(response1);
+                            JSONObject jState = new JSONObject(jsonObject.get("state").toString());
+                            boolean pree = (boolean)jState.get("presence");
+                            textView2.setText(""+ pree);
+                            Log.d(TAG, "run: sensor: "+ pree);
+                        }catch (Exception e){
+                            Log.d("API", "run: errrrr" + e);
+                        }
+
+                        // textView.setText("Response is: "+ response.substring(0,10));
+
+                     //   ApiRequestResult(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                textView.setText("That didn't work!");
+            }
+        });
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest);
+    }
+
+    // http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/debug/clip.html
+    public void onClickSwitch(View view){
+        textPost("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/lights/6/state");
+    }
+
+    public void getFirestore(View view){
+
+       db.getFirestoreInfo();
+    }
+    public void putFirestore(View view){
+
+        db.putFirestoreStuff();
+    }
+
 
     public void onClickDevices(View view){
         Intent intent = new Intent(this,ListDevicesActivity.class);
         startActivity(intent);
     }
 
-
+    private boolean light1;
     public void jsonApiCall(String url) throws JSONException {
         RequestQueue queue = Volley.newRequestQueue(this);
-
+        light1 = !light1;
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("Number", "124");
-        jsonObject.put("devicetype","my_hue_app#hue app");
+        jsonObject.put("on", light1);
+        // jsonObject.put("devicetype","my_hue_app#hue app");
 
         final String requestBody=jsonObject.toString();
 
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.PUT, url, jsonObject,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -122,7 +231,7 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
             public void onErrorResponse(VolleyError error) {
 
                 //handle the error
-                Log.d(TAG, "onErrorResponse: error jsonobjectrequest");
+                Log.d(TAG, "onErrorResponse: error jsonobjectrequest" + error);
                 error.printStackTrace();
             }
         }) {    //this is the part, that adds the header to the request
@@ -156,8 +265,12 @@ public class MainActivity extends AppCompatActivity implements APIcallback {
         queue.add(jsonRequest);
     }
 
-
+    private String response1;
     ////////////////////////////////
     //// UPNP devices
-
+    class UpdateSensor extends TimerTask {
+        public void run() {
+            apiGetCallSensor("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/sensors/24" , "sensors");
+        }
+    }
 }

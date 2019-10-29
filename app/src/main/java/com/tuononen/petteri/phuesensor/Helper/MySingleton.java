@@ -1,4 +1,4 @@
-package com.tuononen.petteri.phuesensor;
+package com.tuononen.petteri.phuesensor.Helper;
 
 import com._8rine.upnpdiscovery.UPnPDevice;
 

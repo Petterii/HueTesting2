@@ -1,4 +1,4 @@
-package com.tuononen.petteri.phuesensor;
+package com.tuononen.petteri.phuesensor.Helper;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -9,11 +9,12 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com._8rine.upnpdiscovery.UPnPDevice;
+import com.tuononen.petteri.phuesensor.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-class SingleLineAdapter extends BaseAdapter {
+public class SingleLineAdapter extends BaseAdapter {
     private Context context;
     private LayoutInflater inflater;
     public static List<UPnPDevice> devices;

@@ -1,12 +1,13 @@
-package com.tuononen.petteri.phuesensor;
+package com.tuononen.petteri.phuesensor.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com._8rine.upnpdiscovery.UPnPDevice;
 import com._8rine.upnpdiscovery.UPnPDiscovery;
@@ -16,6 +17,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.tuononen.petteri.phuesensor.Helper.MySingleton;
+import com.tuononen.petteri.phuesensor.Helper.SingleLineAdapter;
+import com.tuononen.petteri.phuesensor.R;
 
 import java.util.HashSet;
 import java.util.List;
@@ -115,6 +119,8 @@ public class ListDevicesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 store.setCurrentBridgeDevice(SingleLineAdapter.devices.get(position));
+                Intent intent = new Intent(ListDevicesActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
     }
