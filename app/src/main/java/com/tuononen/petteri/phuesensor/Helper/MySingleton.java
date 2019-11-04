@@ -8,6 +8,7 @@ public class MySingleton {
 
     private String userName;
     private UPnPDevice currentBridgeDevice;
+    private String currentToken;
 
     private MySingleton()
     {
@@ -27,5 +28,13 @@ public class MySingleton {
 
     public UPnPDevice getCurrentBridgeDevice() {
         return currentBridgeDevice;
+    }
+
+    public void setCurrentToken(String response) {
+        this.currentToken = response;
+    }
+
+    public String getCurrentToken() {
+        return this.currentToken;
     }
 }

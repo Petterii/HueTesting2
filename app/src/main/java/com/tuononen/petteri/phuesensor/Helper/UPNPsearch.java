@@ -13,8 +13,9 @@ public class UPNPsearch {
 
 
 
-    private static UPNPcallback callback;
-    public static void searchPNPDevices(Activity activity){
+
+    public static void searchPNPDevices(Activity activity, final UPNPcallback callback){
+
         // devices = new ArrayList<>();
         UPnPDiscovery.discoveryDevices(activity, new UPnPDiscovery.OnDiscoveryListener() {
             @Override

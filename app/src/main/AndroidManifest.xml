@@ -11,15 +11,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.SensorActivationActivity"></activity>
-        <activity android:name=".Activities.HomeSetupActivity" />
-        <activity android:name=".Activities.Main2Activity" />
-        <activity android:name=".Activities.MainMenuActivity">
+        <activity android:name=".Activities.SignUpActivity"></activity>
+        <activity android:name=".Activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".Activities.FirePushNotes" />
+        <activity android:name=".Activities.SensorActivationActivity" />
+        <activity android:name=".Activities.HomeSetupActivity" />
+        <activity android:name=".Activities.Main2Activity" />
+        <activity android:name=".Activities.MainMenuActivity">
+
         </activity>
     </application>
 

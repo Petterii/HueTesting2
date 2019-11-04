@@ -27,28 +27,21 @@ public class HomeSetupActivity extends AppCompatActivity implements UPNPcallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homesetup);
         store = MySingleton.getInstance();
+
         initAdapter();
-
-
         initButton();
     }
 
     private void initButton() {
         Button searchBridgeButton = (Button) findViewById(R.id.setup_find_bridge);
-
         searchBridgeButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                UPNPsearch.searchPNPDevices(HomeSetupActivity.this);
+                UPNPsearch.searchPNPDevices(HomeSetupActivity.this, HomeSetupActivity.this);
             }
         });
     }
 
-    public void searchPNPDevices(){
-
-    }
-
     private void initAdapter(){
-
         listView = findViewById(R.id.setup_list_bridges);
         adapter = new SingleLineAdapter(this);
         listView.setAdapter(adapter);

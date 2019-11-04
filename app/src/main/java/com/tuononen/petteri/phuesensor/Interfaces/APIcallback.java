@@ -1,5 +1,9 @@
 package com.tuononen.petteri.phuesensor.Interfaces;
 
 public interface APIcallback {
-    public void ApiRequestResult(String result);
+    void ApiRequestResult(String result);
+
+    void ApiRequestResultTest(String response);
+
+    void ApiRequestResultToken(String token);
 }

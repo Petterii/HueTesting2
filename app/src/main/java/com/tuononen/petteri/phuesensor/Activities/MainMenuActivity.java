@@ -1,18 +1,30 @@
 package com.tuononen.petteri.phuesensor.Activities;
 
 import android.content.Intent;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.tuononen.petteri.phuesensor.Helper.FirebaseFunctions;
+import com.tuononen.petteri.phuesensor.Helper.MySingleton;
+import com.tuononen.petteri.phuesensor.Interfaces.APIcallback;
 import com.tuononen.petteri.phuesensor.R;
 
-public class MainMenuActivity extends AppCompatActivity {
+public class MainMenuActivity extends AppCompatActivity implements APIcallback {
 
 /*
     final static String TAG = "API";
-    private MySingleton store;
+
     FirebaseFunctions db;
     TextView textView;
     TextView textView2;
@@ -21,27 +33,31 @@ public class MainMenuActivity extends AppCompatActivity {
     String bridgeIPGetURL = "https://discovery.meethue.com ";
     final String TESTAPI = "http://www.google.com";
 */
+    private TextView connectedBrigde;
+    private MySingleton store;
+    private FirebaseFirestore db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mainmenu);
-
-        initButtons();
-        /*
-        light1 = true;
-        db = new FirebaseFunctions();
+        db = FirebaseFirestore.getInstance();
         store = MySingleton.getInstance();
 
-        textView = findViewById(R.id.labelSensor);
-        textView2 = findViewById(R.id.lightLabel);
-        bridgeCon = findViewById(R.id.philipHueStatus);
+        initButtons();
+        initTextFields();
+        getBrigde();
+    }
 
+    private void getBrigde() {
         if (store.getCurrentBridgeDevice() != null)
-            bridgeCon.setText("OK. "+store.getCurrentBridgeDevice().getHostAddress());
-      //  searchPNPDevices();
-       // apiGetCall(TESTAPI);
-      // textPost();
-      */
+            connectedBrigde.setText(store.getCurrentBridgeDevice().getFriendlyName());
+        else
+            connectedBrigde.setText("NONE");
+    }
+
+    private void initTextFields() {
+        connectedBrigde = findViewById(R.id.mainmenu_connectedbridge);
     }
 
     private void initButtons() {
@@ -64,75 +80,32 @@ public class MainMenuActivity extends AppCompatActivity {
             }
         });
 
-    }
-/*
-    private void textPost(String url) {
-        try{
-            jsonApiCall(url);
-        }catch (Exception e){
-            Log.d(TAG, "jsonAPI: "+e);
-        }
-    }
+        Button pushNotisButton = (Button) findViewById(R.id.mainmenu_pushtest);
 
-    public void mapIterator(String jsonString){
-
-        try {
-
-            JSONObject jsonObject = new JSONObject(jsonString);
-            JSONObject jState = new JSONObject(jsonObject.get("state").toString());
-            boolean pree = (boolean)jState.get("presence");
-            //JSONObject lights = jsonObject.getJSONObject(type1);
-
-            Iterator<String> keyIterator = jsonObject.keys();
-
-            while (keyIterator.hasNext()) {
-                String key = keyIterator.next();
-                JSONObject l = jsonObject.getJSONObject(key);
-
-                boolean pres = true;
-                String state;
-
-                  //  state = l.getString("state");
-                  //  JSONObject stateObject = new JSONObject(state);
-                    pres = l.getBoolean("presence");
-                    textView2.setText(""+pres);
-                    state = "ring";
-                    state = "ding";
-
-                // String state = l.getString("state");
-
-            }
-        }catch (Exception e){
-            Log.d("API", "mapIterator: catch Error" + e);
-        }
-    }
-
-    public void apiGetCall(String url,final String devices){
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        //url ="http://www.google.com";
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url+devices,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        mapIterator(response.toString());
-
-                       // textView.setText("Response is: "+ response.substring(0,10));
-
-                        ApiRequestResult(response);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                textView.setText("That didn't work!");
+        pushNotisButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FirebaseFunctions.getFireStoreToken(MainMenuActivity.this,MainMenuActivity.this);
             }
         });
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
+        Button logout = (Button) findViewById(R.id.mainmenu_logout);
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(MainMenuActivity.this,LoginActivity.class));
+            }
+        });
+    }
+
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+
+    public void loginAuth(){
+
+
+
+
     }
 
     @Override
@@ -140,62 +113,29 @@ public class MainMenuActivity extends AppCompatActivity {
 
     }
 
-    public void onClickGetLight(View view){
-        apiGetCall("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ" , "lights");
-    }
-
-    public void onClickGetSensor(View view){
-        Timer timer = new Timer(true);
-        timer.schedule(new UpdateSensor(), 0,700);
-
-
-
+    @Override
+    public void ApiRequestResultTest(String response) {
 
     }
 
-    private void apiGetCallSensor(String s, final String sensors) {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        //url ="http://www.google.com";
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, s,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        response1 = response;
-
-                        try {
-
-                            JSONObject jsonObject = new JSONObject(response1);
-                            JSONObject jState = new JSONObject(jsonObject.get("state").toString());
-                            boolean pree = (boolean)jState.get("presence");
-                            textView2.setText(""+ pree);
-                            Log.d(TAG, "run: sensor: "+ pree);
-                        }catch (Exception e){
-                            Log.d("API", "run: errrrr" + e);
-                        }
-
-                        // textView.setText("Response is: "+ response.substring(0,10));
-
-                     //   ApiRequestResult(response);
-                    }
-                }, new Response.ErrorListener() {
+    @Override
+    public void ApiRequestResultToken(String token) {
+        store.setCurrentToken(token);
+    }
+    /*
+    @Override
+    protected void onStart() {
+        super.onStart();
+        db.collection("Users").document("123").addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                textView.setText("That didn't work!");
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                
             }
         });
 
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
     }
-
-    // http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/debug/clip.html
-    public void onClickSwitch(View view){
-        textPost("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/lights/6/state");
-    }
+    */
+    /*
 
     public void getFirestore(View view){
 
@@ -273,10 +213,6 @@ public class MainMenuActivity extends AppCompatActivity {
     private String response1;
     ////////////////////////////////
     //// UPNP devices
-    class UpdateSensor extends TimerTask {
-        public void run() {
-            apiGetCallSensor("http://192.168.0.9/api/e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ/sensors/24" , "sensors");
-        }
-    }
+
 */
 }
