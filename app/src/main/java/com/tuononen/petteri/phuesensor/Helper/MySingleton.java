@@ -6,9 +6,9 @@ public class MySingleton {
 
     private static MySingleton single_instance = null;
 
-    private String userName;
     private UPnPDevice currentBridgeDevice;
     private String currentToken;
+    private String currentUser;
 
     private MySingleton()
     {
@@ -36,5 +36,14 @@ public class MySingleton {
 
     public String getCurrentToken() {
         return this.currentToken;
+    }
+
+    public void setCurrentUser(String uid) {
+
+        this.currentUser = uid;
+    }
+
+    public String getCurrentUser() {
+        return currentUser;
     }
 }

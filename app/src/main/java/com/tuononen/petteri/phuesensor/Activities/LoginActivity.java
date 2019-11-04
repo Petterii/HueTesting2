@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.tuononen.petteri.phuesensor.Helper.MySingleton;
 import com.tuononen.petteri.phuesensor.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -24,6 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private FirebaseAuth mfirebaseAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private MySingleton store;
 
 
 
@@ -32,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        store = MySingleton.getInstance();
         mfirebaseAuth = FirebaseAuth.getInstance();
         editEmail = findViewById(R.id.login_email);
         editPsw = findViewById(R.id.login_password);
@@ -43,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
                 FirebaseUser mFirebaseUser = mfirebaseAuth.getCurrentUser();
                 if (mFirebaseUser != null){
                     Toast.makeText(LoginActivity.this,"You are logged in",Toast.LENGTH_SHORT).show();
+                    store.setCurrentUser(mFirebaseUser.getUid());
                     startActivity(new Intent(LoginActivity.this,MainMenuActivity.class));
                 } else{
                     Toast.makeText(LoginActivity.this,"Please Login",Toast.LENGTH_SHORT).show();
