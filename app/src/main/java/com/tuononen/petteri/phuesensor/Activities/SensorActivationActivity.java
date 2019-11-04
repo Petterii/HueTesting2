@@ -155,7 +155,7 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
         public void run() {
             // todo change this to propper call... currently a test on specific sensor
             BridgeAPIcalls.apiGetCallSensorTest(SensorActivationActivity.this,
-                    "http://192.168.0.9/api/"+Globals.username+"/sensors/24" , SensorActivationActivity.this);
+                    "http://192.168.0.9/api/"+"e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ"+"/sensors/24" , SensorActivationActivity.this);
         }
     }
 
@@ -163,7 +163,7 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
         public void run() {
 
             BridgeAPIcalls.apiGetCallSensor(SensorActivationActivity.this,
-                    "http://192.168.0.9/api/"+Globals.username+"/sensors" , SensorActivationActivity.this);
+                    "http://192.168.0.9/api/"+"e6tTyKEKc-vv5e45yX-mOKXrvM-evyIyIXCq34NZ"+"/sensors" , SensorActivationActivity.this);
         }
     }
 }
