@@ -2,44 +2,41 @@ package com.tuononen.petteri.phuesensor.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tuononen.petteri.phuesensor.Helper.FirebaseFunctions;
 import com.tuononen.petteri.phuesensor.Helper.MySingleton;
+
 import com.tuononen.petteri.phuesensor.Interfaces.APIcallback;
 import com.tuononen.petteri.phuesensor.R;
 
-public class FirePushNotes extends AppCompatActivity implements APIcallback {
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.UnknownServiceException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
 
-    private MySingleton store;
-    private FirebaseFirestore db;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_fire_push_notes);
-        store = MySingleton.getInstance();
-        db = FirebaseFirestore.getInstance();
-        firestoreSetup();
-    }
+import javax.jmdns.ServiceInfo;
 
-    private void firestoreSetup() {
-        FirebaseFunctions.getFireStoreToken(this,this);
-    }
-
-    @Override
-    public void ApiRequestResult(String result) {
-
-    }
-
-    @Override
-    public void ApiRequestResultTest(String response) {
-
-    }
-
-    @Override
-    public void ApiRequestResultToken(String token) {
-        store.setCurrentToken(token);
-    }
+public class FirePushNotes extends AppCompatActivity {
 }
+

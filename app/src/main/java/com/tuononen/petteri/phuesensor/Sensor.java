@@ -60,6 +60,8 @@ public class Sensor {
         return sensors;
     }
 
+
+
     private Sensor(String pname, String pressence,String key) {
         this.id = key;
         this.name = pname;

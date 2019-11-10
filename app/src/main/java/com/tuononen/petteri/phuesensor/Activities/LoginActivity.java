@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.tuononen.petteri.phuesensor.BridgeUser;
 import com.tuononen.petteri.phuesensor.Helper.MySingleton;
 import com.tuononen.petteri.phuesensor.R;
 
@@ -45,8 +46,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser mFirebaseUser = mfirebaseAuth.getCurrentUser();
                 if (mFirebaseUser != null){
+                    BridgeUser user = new BridgeUser(mFirebaseUser.getEmail(),mFirebaseUser.getUid());
+                    MySingleton store = MySingleton.getInstance();
+                    store.setCurrentUser(user);
                     Toast.makeText(LoginActivity.this,"You are logged in",Toast.LENGTH_SHORT).show();
-                    store.setCurrentUser(mFirebaseUser.getUid());
+                    //store.setCurrentUser(mFirebaseUser.getUid());
                     startActivity(new Intent(LoginActivity.this,MainMenuActivity.class));
                 } else{
                     Toast.makeText(LoginActivity.this,"Please Login",Toast.LENGTH_SHORT).show();

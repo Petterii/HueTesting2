@@ -2,7 +2,6 @@ package com.tuononen.petteri.phuesensor.Helper;
 
 import android.app.Activity;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -10,14 +9,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.tuononen.petteri.phuesensor.BridgeUser;
 import com.tuononen.petteri.phuesensor.Interfaces.APIcallback;
-import com.tuononen.petteri.phuesensor.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,28 +40,6 @@ public class FirebaseFunctions {
                 });
     }
 
-    public static void putFirestoreStuff(FirebaseFirestore db,boolean trigger){
-        Map<String, Object> user = new HashMap<>();
-        user.put("trigger", trigger);
-
-        // Add a new document with a generated ID
-        db.collection("users").document("123")
-                .set(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("FireStore", "DocumentSnapshot successfully written!");
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("FireStore", "Error writing document", e);
-                    }
-                });
-    }
-
     public static void getFireStoreToken(final Activity activity, final APIcallback callback){
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
@@ -75,22 +51,20 @@ public class FirebaseFunctions {
                 // Get new Instance ID token
                 String token = task.getResult().getToken();
                 callback.ApiRequestResultToken(token);
-
-                // Log and toast
-                //String msg = getString(R.string.msg_token_fmt, token);
-                //Log.d("Firestore: ", msg);
-                //Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public static void addNotifications(FirebaseFirestore db, String token) {
+        Log.d("firebase", "addNotifications: COMMENTEDOUT");
+        /*
         Map<String, Object> note = new HashMap<>();
         note.put("msg", "Sensor activated");
         note.put("token", token);
-
+        MySingleton store = MySingleton.getInstance();
+        BridgeUser user = store.getCurrentUser();
         // Add a new document with a generated ID
-        db.collection("users").document("123").collection("Notification").document("1")
+        db.collection("Users").document(user.getUid()).collection("Notification").document()
                 .set(note)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -105,6 +79,56 @@ public class FirebaseFunctions {
                         Log.w("FireStore", "Error writing document", e);
                     }
                 });
+    */
+    }
+
+    public static void addUser(FirebaseFirestore db, BridgeUser currentUser, final APIcallback callback) {
+        // Add a new document with a generated ID
+        db.collection("Users").document(currentUser.getUid())
+                .set(currentUser)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("FireStore", "NOTE successfully written!");
+                        callback.ApiRequestResult("OK");
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("FireStore", "Error writing document", e);
+                    }
+                });
+
+    }
+
+    public static void addToDevicetoUser(String token) {
+        MySingleton store = MySingleton.getInstance();
+        Map<String,Object> userMap = new HashMap<>();
+        userMap.put("deviceTo",token);
+
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+            // Add a new document with a generated ID
+            db.collection("Users").document(store.getCurrentUser().getUid())
+                    .update(userMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("FireStore", "NOTE successfully written!");
+
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("FireStore", "Error writing document", e);
+                        }
+                    });
+
     }
 }
 

@@ -1,6 +1,8 @@
 package com.tuononen.petteri.phuesensor.Helper;
 
 import com._8rine.upnpdiscovery.UPnPDevice;
+import com.tuononen.petteri.phuesensor.Bridge;
+import com.tuononen.petteri.phuesensor.BridgeUser;
 
 public class MySingleton {
 
@@ -8,7 +10,8 @@ public class MySingleton {
 
     private UPnPDevice currentBridgeDevice;
     private String currentToken;
-    private String currentUser;
+    private BridgeUser currentUser;
+    private Bridge bridgeIP;
 
     private MySingleton()
     {
@@ -38,12 +41,21 @@ public class MySingleton {
         return this.currentToken;
     }
 
-    public void setCurrentUser(String uid) {
 
-        this.currentUser = uid;
+
+    public BridgeUser getCurrentUser() {
+        return currentUser;
     }
 
-    public String getCurrentUser() {
-        return currentUser;
+    public void setCurrentUser(BridgeUser user) {
+        this.currentUser = user;
+    }
+
+    public void setCurrentBridgeDeviceIP(Bridge bridge) {
+        this.bridgeIP = bridge;
+    }
+
+    public Bridge getBridgeIP() {
+        return bridgeIP;
     }
 }

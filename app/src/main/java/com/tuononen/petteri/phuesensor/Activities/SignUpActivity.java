@@ -14,20 +14,26 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.tuononen.petteri.phuesensor.BridgeUser;
+import com.tuononen.petteri.phuesensor.Helper.FirebaseFunctions;
+import com.tuononen.petteri.phuesensor.Helper.MySingleton;
+import com.tuononen.petteri.phuesensor.Interfaces.APIcallback;
 import com.tuononen.petteri.phuesensor.R;
 
-public class SignUpActivity extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity implements APIcallback {
 
     EditText editPsw;
     EditText editEmail;
     Button loginButton;
     FirebaseAuth firebaseAuth;
-
+    private MySingleton store;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        store = MySingleton.getInstance();
         firebaseAuth = FirebaseAuth.getInstance();
         editEmail = findViewById(R.id.signup_email);
         editPsw = findViewById(R.id.signup_password);
@@ -61,7 +67,13 @@ public class SignUpActivity extends AppCompatActivity {
                             if (!task.isSuccessful()){
                                 Toast.makeText(SignUpActivity.this,"SignUp Unsuccessful. Please try again",Toast.LENGTH_LONG).show();
                             } else {
-                                startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
+                                // get user,Uid and then get DeviceToken
+                                String userUid = task.getResult().getUser().getUid();
+                                String userEmail = task.getResult().getUser().getEmail();
+                                BridgeUser user = new BridgeUser(userEmail,userUid);
+                                store.setCurrentUser(user);
+                                FirebaseFunctions.getFireStoreToken(SignUpActivity.this,SignUpActivity.this);
+
                             }
                         }
                     });
@@ -70,5 +82,22 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void ApiRequestResult(String result) {
+        startActivity(new Intent(SignUpActivity.this,LoginActivity.class));
+    }
+
+    @Override
+    public void ApiRequestResultTest(String response) {
+
+    }
+
+    @Override
+    public void ApiRequestResultToken(String token) {
+        store.getCurrentUser().setDeviceToken(token);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFunctions.addUser(db,store.getCurrentUser(),this);
     }
 }

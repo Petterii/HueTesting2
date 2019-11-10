@@ -1,10 +1,14 @@
 package com.tuononen.petteri.phuesensor.Activities;
 
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,6 +19,8 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.tuononen.petteri.phuesensor.Bridge;
+import com.tuononen.petteri.phuesensor.BridgeUser;
 import com.tuononen.petteri.phuesensor.Helper.FirebaseFunctions;
 import com.tuononen.petteri.phuesensor.Helper.MySingleton;
 import com.tuononen.petteri.phuesensor.Interfaces.APIcallback;
@@ -43,12 +49,46 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
         setContentView(R.layout.activity_mainmenu);
         db = FirebaseFirestore.getInstance();
         store = MySingleton.getInstance();
-
+        getPreffs();
+        test();
         initButtons();
         initTextFields();
         getBrigde();
     }
 
+    private void getPreffs() {
+        MySingleton store = MySingleton.getInstance();
+        SharedPreferences shared = getSharedPreferences("MYPREFFS", MODE_PRIVATE);
+
+        String ip = shared.getString("bridgeip","");
+        String key = shared.getString("bridgekey", "");
+
+        Bridge buser = new Bridge(ip,key);
+        store.setCurrentBridgeDeviceIP(buser);
+        //editor.putString(Email, e);
+    }
+
+    public static void test()
+    {
+        int i[] = {0,1};
+        try
+        {
+            i[2] = i[0] + i[1];
+        }
+        catch(ArrayIndexOutOfBoundsException e1)
+        {
+            System.out.println("1");
+        }
+        catch(Exception e2)
+        {
+            System.out.println("2");
+        }
+        finally
+        {
+            System.out.println(3);
+        }
+        System.out.println("4");
+    }
     private void getBrigde() {
         if (store.getCurrentBridgeDevice() != null)
             connectedBrigde.setText(store.getCurrentBridgeDevice().getFriendlyName());
@@ -62,7 +102,7 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
 
     private void initButtons() {
 
-        Button setupButton = (Button) findViewById(R.id.mainmenu_homesetup);
+        final Button setupButton = (Button) findViewById(R.id.mainmenu_homesetup);
 
         setupButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -71,7 +111,7 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
             }
         });
 
-        Button sensorButton = (Button) findViewById(R.id.mainmenu_homeactivation);
+        final Button sensorButton = (Button) findViewById(R.id.mainmenu_homeactivation);
 
         sensorButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -84,6 +124,22 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
 
         pushNotisButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                /*
+                try {
+
+                    PushoverClient client = new PushoverRestClient();
+                    client.pushMessage(PushoverMessage.builderWithApiToken("afw1tyat8px44tenjxpjq2odcabq5e")
+                            .setUserId("uw8rs6pbw4retdf2kntg9fdnmu83pp")
+                            .setMessage("testing!")
+                            .build());
+
+                }catch (Exception e){
+                    Log.d("PUSH", "pushover : " + e);
+                }
+                */
+               // startActivity(new Intent(MainMenuActivity.this,JmDNSActivity.class));
+                setupButton.setEnabled(false);
+                sensorButton.setEnabled(false);
                 FirebaseFunctions.getFireStoreToken(MainMenuActivity.this,MainMenuActivity.this);
             }
         });
@@ -121,6 +177,7 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
     @Override
     public void ApiRequestResultToken(String token) {
         store.setCurrentToken(token);
+        FirebaseFunctions.addToDevicetoUser(token);
     }
     /*
     @Override
