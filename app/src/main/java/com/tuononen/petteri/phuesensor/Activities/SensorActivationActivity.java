@@ -138,6 +138,13 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
 
     }
 
+    @Override
+    public void ApiRequestResultToDevice(String token) {
+        if (token !=null){
+            FirebaseFunctions.addNotifications(db, store.getCurrentToken());
+        }
+    }
+
     private void testingSensorCalls(String respons){
         try {
             JSONObject jsonObject = new JSONObject(respons);

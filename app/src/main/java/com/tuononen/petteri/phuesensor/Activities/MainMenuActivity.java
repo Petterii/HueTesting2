@@ -182,6 +182,11 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
         store.setCurrentToken(token);
         FirebaseFunctions.addToDevicetoUser(token);
     }
+
+    @Override
+    public void ApiRequestResultToDevice(String token) {
+
+    }
     /*
     @Override
     protected void onStart() {

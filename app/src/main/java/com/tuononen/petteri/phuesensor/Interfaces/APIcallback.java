@@ -6,4 +6,6 @@ public interface APIcallback {
     void ApiRequestResultTest(String response);
 
     void ApiRequestResultToken(String token);
+
+    void ApiRequestResultToDevice(String token);
 }

@@ -141,7 +141,7 @@ public class FirebaseFunctions {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 Log.d("firestore", "onComplete: " + task.getResult());
                 String token = (String) task.getResult().get("deviceTo");
-                callback.ApiRequestResult(token);
+                callback.ApiRequestResultToDevice(token);
                 int x=1;
                 x=5;
             }

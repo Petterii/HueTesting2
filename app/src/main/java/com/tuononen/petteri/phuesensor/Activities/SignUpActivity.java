@@ -100,4 +100,9 @@ public class SignUpActivity extends AppCompatActivity implements APIcallback {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseFunctions.addUser(db,store.getCurrentUser(),this);
     }
+
+    @Override
+    public void ApiRequestResultToDevice(String token) {
+        
+    }
 }
