@@ -156,6 +156,7 @@ public abstract class BridgeAPIcalls {
                     String description = a3.getString("description");
                     Log.d("json", "onResponse: "+ description);
                     Toast.makeText(activity, ""+description, Toast.LENGTH_SHORT).show();
+                    callback.ApiRequestResult("Error");
                 }catch (Exception e){
                     try{
                         a1 = new JSONArray(response);

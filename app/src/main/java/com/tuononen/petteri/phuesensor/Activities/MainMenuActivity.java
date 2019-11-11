@@ -65,6 +65,7 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
 
         Bridge buser = new Bridge(ip,key);
         store.setCurrentBridgeDeviceIP(buser);
+
         //editor.putString(Email, e);
     }
 
@@ -98,6 +99,8 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
 
     private void initTextFields() {
         connectedBrigde = findViewById(R.id.mainmenu_connectedbridge);
+
+        connectedBrigde.setText(store.getBridgeIP().getInternalipaddress());
     }
 
     private void initButtons() {

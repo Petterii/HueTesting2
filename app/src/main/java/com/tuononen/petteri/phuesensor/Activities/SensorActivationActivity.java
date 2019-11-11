@@ -11,7 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.tuononen.petteri.phuesensor.Globals;
 import com.tuononen.petteri.phuesensor.Helper.BridgeAPIcalls;
 import com.tuononen.petteri.phuesensor.Helper.FirebaseFunctions;
 import com.tuononen.petteri.phuesensor.Helper.MySingleton;
@@ -114,7 +113,8 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
                 //FirebaseFunctions.putFirestoreStuff(db,true);
                 Log.d("FIRESTORE", "firestore : true ");
                  if (!sentTrigger) {
-                    FirebaseFunctions.addNotifications(db, store.getCurrentToken());
+                    FirebaseFunctions.getToDeviceToken(db,this);
+                     //FirebaseFunctions.addNotifications(db, store.getCurrentToken());
                     sentTrigger = true;
                 }
                     sensor.setPreviousPresence(true);

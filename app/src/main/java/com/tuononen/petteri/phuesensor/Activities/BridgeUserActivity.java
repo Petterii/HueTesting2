@@ -66,6 +66,8 @@ public class BridgeUserActivity extends AppCompatActivity implements APIcallback
 
             // todo do I need to do anything after Bridge user is created?
             startActivity(new Intent(this,MainMenuActivity.class));
+        }else if(result.equals("Error")){
+            createUserButton.setEnabled(true);
         }
 
     }

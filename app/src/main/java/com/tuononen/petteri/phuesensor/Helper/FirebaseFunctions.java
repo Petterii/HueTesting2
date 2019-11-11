@@ -9,11 +9,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.tuononen.petteri.phuesensor.Activities.SensorActivationActivity;
 import com.tuononen.petteri.phuesensor.BridgeUser;
 import com.tuononen.petteri.phuesensor.Interfaces.APIcallback;
 
@@ -128,6 +130,27 @@ public class FirebaseFunctions {
                             Log.w("FireStore", "Error writing document", e);
                         }
                     });
+
+    }
+
+    public static void getToDeviceToken(FirebaseFirestore db, final SensorActivationActivity callback) {
+        MySingleton store = MySingleton.getInstance();
+        db.collection("Users").document(store.getCurrentUser().getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                Log.d("firestore", "onComplete: " + task.getResult());
+                String token = (String) task.getResult().get("deviceTo");
+                callback.ApiRequestResult(token);
+                int x=1;
+                x=5;
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
 
     }
 }
