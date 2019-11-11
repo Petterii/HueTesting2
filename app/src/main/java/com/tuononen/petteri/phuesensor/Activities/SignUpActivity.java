@@ -103,6 +103,6 @@ public class SignUpActivity extends AppCompatActivity implements APIcallback {
 
     @Override
     public void ApiRequestResultToDevice(String token) {
-        
+
     }
 }

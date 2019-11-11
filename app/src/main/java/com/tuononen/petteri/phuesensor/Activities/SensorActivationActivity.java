@@ -53,19 +53,14 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
     }
 
     private void initTextFields() {
-        testLabel = findViewById(R.id.sensors_testLabel);
+
     }
 
     private boolean isTimerOn;
     private boolean isAllTimerOn;
 
     private void initButtons() {
-        testButton = (Button) findViewById(R.id.testSensorLoop);
-        testButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            sentTrigger = false;
-            }
-        });
+
         activationAllButton = (Button) findViewById(R.id.home_activate_sensors);
         activationAllButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -78,7 +73,6 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
                     isAllTimerOn = false;
                     timer.cancel();
                 }
-
             }
         });
 
@@ -141,7 +135,7 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
     @Override
     public void ApiRequestResultToDevice(String token) {
         if (token !=null){
-            FirebaseFunctions.addNotifications(db, store.getCurrentToken());
+            FirebaseFunctions.addNotifications(db, token);
         }
     }
 

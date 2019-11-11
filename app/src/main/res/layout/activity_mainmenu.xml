@@ -11,20 +11,23 @@
         android:layout_width="198dp"
         android:layout_height="85dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="180dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Setup"
+        app:layout_constraintBottom_toTopOf="@+id/mainmenu_pushtest"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/mainmenu_connectedLabel"
+        app:layout_constraintVertical_bias="0.110000014" />
 
     <Button
         android:id="@+id/mainmenu_homeactivation"
         android:layout_width="213dp"
         android:layout_height="88dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="Find And Activate Sensors"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,15 +64,12 @@
         android:layout_width="173dp"
         android:layout_height="81dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:text="This phone for use of notification"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:layout_constraintVertical_bias="0.406" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/mainmenu_logout"
@@ -86,12 +86,12 @@
         android:layout_width="307dp"
         android:layout_height="73dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="96dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="Use this phone to receiver push notifications"
         android:textAlignment="center"
         android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/mainmenu_pushtest"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainmenu_homeactivation" />
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

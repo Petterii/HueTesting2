@@ -59,7 +59,7 @@ public class FirebaseFunctions {
 
     public static void addNotifications(FirebaseFirestore db, String token) {
         Log.d("firebase", "addNotifications: COMMENTEDOUT");
-        /*
+
         Map<String, Object> note = new HashMap<>();
         note.put("msg", "Sensor activated");
         note.put("token", token);
@@ -72,7 +72,6 @@ public class FirebaseFunctions {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("FireStore", "NOTE successfully written!");
-
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -81,7 +80,7 @@ public class FirebaseFunctions {
                         Log.w("FireStore", "Error writing document", e);
                     }
                 });
-    */
+
     }
 
     public static void addUser(FirebaseFirestore db, BridgeUser currentUser, final APIcallback callback) {
