@@ -14,11 +14,17 @@ public class Sensor {
     private String presence;
     private String id;
     private String name;
+    private ArrayList<String> notificationHistory;
     private boolean previousPresence;
+    private boolean on;
+    private boolean notifying;
+    private boolean sound;
+
 
     public Sensor(String jsonString) {
         mapIterator(jsonString);
         previousPresence = false;
+        notificationHistory = new ArrayList<>();
     }
 
     public static List<Sensor> mapIterator(String jsonString){
@@ -41,8 +47,10 @@ public class Sensor {
                     JSONObject state = (JSONObject) l.get("state");
                     String pressence = state.getString("presence");
 
+                    JSONObject config = (JSONObject) l.get("config");
+                    boolean on = config.getBoolean("on");
 
-                    Sensor sensor = new Sensor(pname,pressence,key);
+                    Sensor sensor = new Sensor(pname,pressence,key,on);
                     sensors.add(sensor);
                 }catch (Exception e){
                     Log.d("API", "mapIterator: " + e);
@@ -62,16 +70,13 @@ public class Sensor {
 
 
 
-    private Sensor(String pname, String pressence,String key) {
+    private Sensor(String pname, String pressence,String key, boolean on) {
         this.id = key;
         this.name = pname;
         this.presence = pressence;
-        /*
-        if (pressence.equals("true") && this.previousPresence != true)
-            this.previousPresence = true;
-        else if(presence.equals("false") && this.previousPresence != false)
-            this.previousPresence = false;
-    */
+        this.on = on;
+        this.sound = false;
+        this.notifying = false;
     }
 
     public String getPresence() {
@@ -92,5 +97,13 @@ public class Sensor {
 
     public void setPreviousPresence(boolean b) {
         this.previousPresence = b;
+    }
+
+    public boolean isNotifying() {
+        return notifying;
+    }
+
+    public void setNotifying(boolean notifying) {
+        this.notifying = notifying;
     }
 }

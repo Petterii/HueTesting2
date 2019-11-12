@@ -147,10 +147,14 @@ public class FirebaseFunctions {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
             }
         });
 
     }
 }
 
+/*
+// Get Current time
+SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z");
+Date date = new Date(System.currentTimeMillis());
+*/

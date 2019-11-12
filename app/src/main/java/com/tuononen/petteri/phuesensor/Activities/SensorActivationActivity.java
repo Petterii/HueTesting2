@@ -36,6 +36,7 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
     private Button testButton;
     private Button searchBridgeButton;
     private Button activationAllButton;
+    private List<Sensor> sensors;
 
     private SensorListAdapter adapter;
 

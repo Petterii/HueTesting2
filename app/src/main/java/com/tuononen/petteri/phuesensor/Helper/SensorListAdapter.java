@@ -5,7 +5,9 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tuononen.petteri.phuesensor.R;
@@ -20,11 +22,14 @@ public class SensorListAdapter extends BaseAdapter {
 
     private LayoutInflater inflater;
     private List<Sensor> sensors;
+    private NotificationHistoryAdapter adapterHistory;
+    private Context context;
+    private ListView listView;
 
     public SensorListAdapter(Context context) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         sensors = new ArrayList<>();
-
+        this.context = context;
     }
 
     @Override
@@ -55,14 +60,19 @@ public class SensorListAdapter extends BaseAdapter {
 
         name.setText(sensors.get(position).getName());
         nr.setText(""+sensors.get(position).getPresence());
-
+/*
         if (sensors.get(position).getPresence().equals("true"))
             view.setBackgroundColor(Color.RED);
         else
             view.setBackgroundColor(Color.GREEN);
+*/
+        listView = view.findViewById(R.id.scanning_listhistory);
+        adapterHistory = new NotificationHistoryAdapter(context);
+        listView.setAdapter(adapterHistory);
 
-
-
+        adapterHistory.addItem("Test Motion 123123");
+        adapterHistory.addItem("Test Motion 123123");
+        adapterHistory.addItem("Test Motion 123123");
         return view;
     }
 
