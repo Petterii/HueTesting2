@@ -50,7 +50,7 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
         db = FirebaseFirestore.getInstance();
         store = MySingleton.getInstance();
         getPreffs();
-        test();
+
         initButtons();
         initTextFields();
         getBrigde();
@@ -69,30 +69,10 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
         //editor.putString(Email, e);
     }
 
-    public static void test()
-    {
-        int i[] = {0,1};
-        try
-        {
-            i[2] = i[0] + i[1];
-        }
-        catch(ArrayIndexOutOfBoundsException e1)
-        {
-            System.out.println("1");
-        }
-        catch(Exception e2)
-        {
-            System.out.println("2");
-        }
-        finally
-        {
-            System.out.println(3);
-        }
-        System.out.println("4");
-    }
+
     private void getBrigde() {
-        if (store.getCurrentBridgeDevice() != null)
-            connectedBrigde.setText(store.getCurrentBridgeDevice().getFriendlyName());
+        if (store.getBridgeIP() != null)
+            connectedBrigde.setText(store.getBridgeIP().getInternalipaddress());
         else
             connectedBrigde.setText("NONE");
     }

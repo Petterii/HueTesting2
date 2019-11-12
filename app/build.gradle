@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:17.2.1'
     implementation 'org.jmdns:jmdns:3.5.5'
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
    // implementation group: 'com.chrisplus.rootmanager', name: 'library', version: '2.0.5'
     //implementation 'org.apache.httpcomponents:httpclient:4.2.1'
     // implementation 'com.github.sps.pushover.net:pushover-client:1.0.0'
