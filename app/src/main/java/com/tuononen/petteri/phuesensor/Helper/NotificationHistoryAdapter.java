@@ -18,7 +18,7 @@ public class NotificationHistoryAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
-    public static List<String> history;
+    private List<String> history;
 
 
     public NotificationHistoryAdapter(Context context) {
@@ -62,5 +62,9 @@ public class NotificationHistoryAdapter extends BaseAdapter {
 
     public void addItem(String msg) {
         history.add(msg);
+    }
+
+    public void setHistory(ArrayList<String> time) {
+        this.history = time;
     }
 }

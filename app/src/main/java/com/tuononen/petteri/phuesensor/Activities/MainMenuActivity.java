@@ -164,9 +164,10 @@ public class MainMenuActivity extends AppCompatActivity implements APIcallback {
     }
 
     @Override
-    public void ApiRequestResultToDevice(String token) {
+    public void ApiRequestResultToDevice(String token, String sensorId) {
 
     }
+
     /*
     @Override
     protected void onStart() {

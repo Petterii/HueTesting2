@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -21,6 +22,7 @@ import com.tuononen.petteri.phuesensor.Sensor;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,7 +38,8 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
     private Button testButton;
     private Button searchBridgeButton;
     private Button activationAllButton;
-    private List<Sensor> sensors;
+    private ArrayList<Sensor> sensors;
+
 
     private SensorListAdapter adapter;
 
@@ -56,6 +59,8 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
     private void initTextFields() {
 
     }
+
+
 
     private boolean isTimerOn;
     private boolean isAllTimerOn;
@@ -92,28 +97,35 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
               // todo get sensors?
             }
         });
+
+
+
     }
+
 
     private boolean sentTrigger;
     @Override
     public void ApiRequestResult(String result) {
         String hello = result;
-        List<Sensor> sensors = Sensor.mapIterator(result);
+        sensors = Sensor.mapIterator(this,sensors,result);
         adapter.changeList(sensors);
         adapter.notifyDataSetChanged();
 
         db = FirebaseFirestore.getInstance();
         for (Sensor sensor :sensors) {
-            if (sensor.getPresence().equals("true") && sensor.isPreviousPresence() != true){
+            if (sensor.getPresence() && sensor.isPreviousPresence())
+                continue;
+            if (sensor.getPresence() && !sensor.isPreviousPresence()){
+                sensor.setPreviousPresence(true);
                 //FirebaseFunctions.putFirestoreStuff(db,true);
                 Log.d("FIRESTORE", "firestore : true ");
-                 if (!sentTrigger) {
-                    FirebaseFunctions.getToDeviceToken(db,this);
+
+                    FirebaseFunctions.getToDeviceToken(db,this, sensor.getId());
                      //FirebaseFunctions.addNotifications(db, store.getCurrentToken());
                     sentTrigger = true;
-                }
-                    sensor.setPreviousPresence(true);
-            } else if (sensor.getPresence().equals("false") && sensor.isPreviousPresence() != false) {
+
+
+            } else if (!sensor.getPresence()&& sensor.isPreviousPresence()) {
                 //FirebaseFunctions.putFirestoreStuff(db,false);
                 sensor.setPreviousPresence(false);
                 Log.d("FIRESTORE", "firestore : false ");
@@ -134,21 +146,15 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
     }
 
     @Override
-    public void ApiRequestResultToDevice(String token) {
+    public void ApiRequestResultToDevice(String token,String sensorId) {
         if (token !=null){
-            FirebaseFunctions.addNotifications(db, token);
+            // todo remove comment to add notifications again
+            FirebaseFunctions.addNotifications(db, token,sensorId);
         }
     }
 
     private void testingSensorCalls(String respons){
-        try {
-            JSONObject jsonObject = new JSONObject(respons);
-            JSONObject jState = new JSONObject(jsonObject.get("state").toString());
-            boolean pree = (boolean)jState.get("presence");
-            testLabel.setText(""+pree);
-        }catch (Exception e){
-            Log.d("API", "testingSensorCalls: "+ e);
-        }
+
 
     }
 

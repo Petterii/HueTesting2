@@ -2,6 +2,7 @@ package com.tuononen.petteri.phuesensor.Helper;
 
 import android.app.Activity;
 
+import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.text.Editable;
 import android.util.Log;
@@ -198,6 +199,52 @@ public abstract class BridgeAPIcalls {
 
     }
 
+    public static void apiSetSensorOnState(Context activity, boolean on, String id) {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = Volley.newRequestQueue(activity);
+        MySingleton store = MySingleton.getInstance();
+        String ip = store.getBridgeIP().getInternalipaddress();
+        String key = store.getBridgeIP().getKey();
+        String url = "http://" +ip +"/api/" + key+"/sensors/"+id+"/config";
+        //url ="http://www.google.com";
+
+        final JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("on", on);
+        } catch (JSONException e) {
+            Log.d(TAG, "api" + "+e");
+            // handle exception
+        }
+
+        final String requestBody = jsonObject.toString();
+        // Request a string response from the provided URL.
+        JsonArrayRequest putRequest = new JsonArrayRequest(Request.Method.PUT, url, null, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("API", "onResponse: "+response.toString());
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("API", "onErrorResponse: " +error.toString());
+            }
+        }){
+            @Override
+            public byte[] getBody() {
+                try {
+                    return requestBody == null ? null : requestBody.getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", requestBody, "utf-8");
+                    return null;
+                }
+            }
+        };
+
+
+        // Add the request to the RequestQueue.
+        queue.add(putRequest);
+
+    }
 
 
     //// cant use jsonOBJECTTrequest because I get array as an response

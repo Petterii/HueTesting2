@@ -83,7 +83,9 @@ public class BridgeUserActivity extends AppCompatActivity implements APIcallback
     }
 
     @Override
-    public void ApiRequestResultToDevice(String token) {
+    public void ApiRequestResultToDevice(String token, String sensorId) {
 
     }
+
+
 }

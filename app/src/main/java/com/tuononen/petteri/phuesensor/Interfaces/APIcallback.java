@@ -7,5 +7,5 @@ public interface APIcallback {
 
     void ApiRequestResultToken(String token);
 
-    void ApiRequestResultToDevice(String token);
+    void ApiRequestResultToDevice(String token, String sensorId);
 }
