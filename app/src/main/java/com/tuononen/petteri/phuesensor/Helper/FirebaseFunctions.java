@@ -145,7 +145,7 @@ public class FirebaseFunctions {
 
     }
 
-    public static void getToDeviceToken(FirebaseFirestore db, final SensorActivationActivity callback,final String sensorId) {
+    public static void getToDeviceToken(FirebaseFirestore db, final APIcallback callback,final String sensorId) {
         MySingleton store = MySingleton.getInstance();
         db.collection("Users").document(store.getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
