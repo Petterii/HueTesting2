@@ -2,16 +2,23 @@ package com.tuononen.petteri.phuesensor.Activities;
 
 import android.app.Activity;
 import android.app.IntentService;
+
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.os.ResultReceiver;
 import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tuononen.petteri.phuesensor.Helper.BridgeAPIcalls;
@@ -28,6 +35,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class BackgroundScanning extends IntentService implements APIcallback {
+    public static final String CHANNEL_ID = "ScanningID";
+
     public BackgroundScanning() {
         super("ScanningSensors");
         isTimerOn = false;
@@ -46,20 +55,87 @@ public class BackgroundScanning extends IntentService implements APIcallback {
     private APIcallback callback;
 
     private final String TAG = "IntentService";
+    private PowerManager.WakeLock wakeLock;
+
+    public static void turnOff(){
+        shuldStop = true;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d(TAG, "onCreate");
+        shuldStop = false;
         timerOn = true;
         sensors = new ArrayList<>();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            Notification notification = new Notification.Builder(this, "NotificationID")
-                    .setContentTitle("Example IntentService")
-                    .setContentText("Running...")
-                    .setSmallIcon(R.drawable.ic_launcher_background)
-                    .build();
-            startForeground(1,notification);
+        createNotificationChannel();
+
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ExampleApp:Wakelock");
+        wakeLock.acquire();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+        {
+            NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID, "Example Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+
+            sendNot26something();
+        }
+        else
+            sendNotification("Scanning Sensors");
+
+
+
+    }
+
+    private void sendNot26something() {
+        Log.d(TAG, "sendNot26something: start");
+        Intent notificationIntent = new Intent(this,SensorActivationActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Sensor Scanning is On")
+                .setContentText("Scanning...")
+                .setSmallIcon(R.drawable.ic_android)
+                .setContentIntent(pendingIntent)
+                .build();
+        startForeground(1,notification);
+        Log.d(TAG, "sendNot26something: done");
+    }
+
+    private NotificationManager mNotificationManager;
+    private void sendNotification(String msg) {
+        mNotificationManager = (NotificationManager)
+                this.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, SensorActivationActivity.class), 0);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setContentTitle("Philip Hue Sensors")
+                        .setStyle(new NotificationCompat.BigTextStyle()
+                                .bigText(msg))
+                        .setContentText(msg)
+                        .setSmallIcon(R.drawable.ic_android);
+        mBuilder.setContentIntent(contentIntent);
+        mNotificationManager.notify(1, mBuilder.build());
+    }
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        NotificationManagerCompat notificationManagerc = NotificationManagerCompat.from(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = CHANNEL_ID;
+            String description = "sensorInfo";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+
+            notificationManagerc.createNotificationChannel(channel);
         }
     }
 
@@ -86,9 +162,10 @@ public class BackgroundScanning extends IntentService implements APIcallback {
     }
 
     private boolean timerOn;
+    private static boolean shuldStop;
 
     private void doAPICall() {
-        while(timerOn){
+        while(timerOn && !shuldStop ){
             String result = "";
            // BridgeAPIcalls.apiGetCallSensor(this,
              //       "http://"+store.getBridgeIP().getInternalipaddress()+"/api/"+store.getBridgeIP().getKey()+"/sensors" , this);
@@ -234,4 +311,9 @@ public class BackgroundScanning extends IntentService implements APIcallback {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        wakeLock.release();
+    }
 }

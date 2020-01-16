@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
 import android.app.IntentService;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.tuononen.petteri.phuesensor.Activities.BackgroundScanning.CHANNEL_ID;
 
 public class SensorActivationActivity extends AppCompatActivity implements APIcallback, MyResultReceiver.Receiver {
 
@@ -61,6 +66,9 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
         isAllTimerOn = false;
         sentTrigger = false;
 
+        createNotificationChannel();
+
+
         sensor1registerReceiver();
 
         initTextFields();
@@ -68,6 +76,13 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
         initButtons();
     }
 
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID, "Example Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(serviceChannel);
+        }
+    }
 
 
     private void initTextFields() {
@@ -85,23 +100,20 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
         activationAllButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isAllTimerOn == false) {
-
                     isAllTimerOn = true;
-                    //testButton.setEnabled(false);
-                    timer = new Timer(true);
-                //    timer.schedule(new UpdateAllSensor(), 0, 700);
-
+                    activationAllButton
                     Intent intentService = new Intent(Intent.ACTION_SYNC,null,SensorActivationActivity.this,BackgroundScanning.class);
-                    //intentService.setClass(this,);
                     ContextCompat.startForegroundService(SensorActivationActivity.this,intentService);
-
-
-                }else{
-
-                    isAllTimerOn = false;
-                    timer.cancel();
-
                 }
+            }
+        });
+
+        Button offAllButton;
+        offAllButton = (Button) findViewById(R.id.home_off_sensors);
+        offAllButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+               BackgroundScanning.turnOff();
+               isAllTimerOn = false;
             }
         });
 
@@ -117,11 +129,9 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //store.setCurrentBridgeDevice(SingleLineAdapter.devices.get(position));
 
-              // todo get sensors?
+              // todo get specifik sensor?
             }
         });
-
-
 
     }
 
