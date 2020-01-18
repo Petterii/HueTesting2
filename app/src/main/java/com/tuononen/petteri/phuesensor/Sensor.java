@@ -110,7 +110,7 @@ public class Sensor {
                     sensor.update(pname,pressence,on);
                     //sensors.add(sensor);
                 }catch (Exception e){
-                    Log.d("API", "mapIterator: " + e);
+                  //  Log.d("API", "mapIterator: " + e);
                 }
 
                 int x = 1;
@@ -119,7 +119,7 @@ public class Sensor {
 
             }
         }catch (Exception e){
-            Log.d("API", "mapIterator: catch Error" + e);
+           // Log.d("API", "mapIterator: catch Error" + e);
         }
 
         return sensors;
@@ -162,7 +162,7 @@ public class Sensor {
                     Sensor sensor = new Sensor(context, pname,pressence,key,on);
                     sensors.add(sensor);
                 }catch (Exception e){
-                    Log.d("API", "mapIterator: " + e);
+             //       Log.d("API", "mapIterator: " + e);
                 }
 
                 int x = 1;
@@ -171,7 +171,7 @@ public class Sensor {
 
             }
         }catch (Exception e){
-            Log.d("API", "mapIterator: catch Error" + e);
+          //  Log.d("API", "mapIterator: catch Error" + e);
         }
 
         return sensors;
@@ -216,12 +216,12 @@ public class Sensor {
                     if (newlist)
                         sensors.add(sensor);
                 }catch (Exception e){
-                    Log.d("API", "mapIterator: " + e);
+            //        Log.d("API", "mapIterator: " + e);
                 }
 
             }
         }catch (Exception e){
-            Log.d("API", "mapIterator: catch Error" + e);
+          //  Log.d("API", "mapIterator: catch Error" + e);
         }
 
         return sensors;

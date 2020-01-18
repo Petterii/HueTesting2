@@ -43,7 +43,7 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
 
     private MySingleton store;
     ListView listView;
-    TextView testLabel;
+    TextView runningLabel;
 
     private FirebaseFirestore db;
     private Timer timer;
@@ -86,9 +86,17 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
 
 
     private void initTextFields() {
+        runningLabel = findViewById(R.id.home_running_text);
 
+        runningLabel.setText("Scan not Running");
     }
 
+    private void setRunningLabel(){
+        if (activationAllButton.isEnabled())
+            runningLabel.setText("Scan NOT Running.");
+        else
+            runningLabel.setText("Scan Running...");
+    }
 
 
     private boolean isTimerOn;
@@ -102,11 +110,13 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
         activationAllButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isAllTimerOn == false) {
+
                     isAllTimerOn = true;
                     activationAllButton.setEnabled(false);
                     offAllButton.setEnabled(true);
                     Intent intentService = new Intent(Intent.ACTION_SYNC,null,SensorActivationActivity.this,BackgroundScanning.class);
                     ContextCompat.startForegroundService(SensorActivationActivity.this,intentService);
+                    setRunningLabel();
                 }
             }
         });
@@ -118,6 +128,7 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
                 activationAllButton.setEnabled(true);
                BackgroundScanning.turnOff();
                isAllTimerOn = false;
+                setRunningLabel();
             }
         });
 
