@@ -68,6 +68,7 @@ public class BackgroundScanning extends IntentService implements APIcallback {
         shuldStop = false;
         timerOn = true;
         sensors = new ArrayList<>();
+        inForeground = false;
         createNotificationChannel();
 
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -75,27 +76,28 @@ public class BackgroundScanning extends IntentService implements APIcallback {
         wakeLock.acquire();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
         {
-            NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID, "Example Service Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel serviceChannel = new NotificationChannel(CHANNEL_ID, "Example Service Channel", NotificationManager.IMPORTANCE_HIGH);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(serviceChannel);
 
-            sendNot26something();
+            sendNot26something("Scanning...");
         }
         else
-            sendNotification("Scanning Sensors");
+            sendNot26something("Scanning...");
+            //sendNotification("Scanning Sensors");
 
 
 
     }
 
-    private void sendNot26something() {
+    private void sendNot26something(String msg) {
         Log.d(TAG, "sendNot26something: start");
         Intent notificationIntent = new Intent(this,SensorActivationActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,notificationIntent,0);
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Sensor Scanning is On")
-                .setContentText("Scanning...")
+                .setContentText(msg)
                 .setSmallIcon(R.drawable.ic_android)
                 .setContentIntent(pendingIntent)
                 .build();
@@ -116,11 +118,14 @@ public class BackgroundScanning extends IntentService implements APIcallback {
                         .setContentTitle("Philip Hue Sensors")
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setContentText(msg)
                         .setSmallIcon(R.drawable.ic_android);
         mBuilder.setContentIntent(contentIntent);
+
         mNotificationManager.notify(1, mBuilder.build());
     }
+
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -166,6 +171,8 @@ public class BackgroundScanning extends IntentService implements APIcallback {
 
     private void doAPICall() {
         while(timerOn && !shuldStop ){
+
+
             String result = "";
            // BridgeAPIcalls.apiGetCallSensor(this,
              //       "http://"+store.getBridgeIP().getInternalipaddress()+"/api/"+store.getBridgeIP().getKey()+"/sensors" , this);
@@ -177,42 +184,52 @@ public class BackgroundScanning extends IntentService implements APIcallback {
             }
               SystemClock.sleep(1500);
         }
+
+        if (shuldStop)
+        {
+            sendNotification("Scanning Sensors STOPPED!!!");
+        }
+
     }
 
+    private static boolean inForeground;
+    // private ArrayList<Sensor> sensors;
+
     private void handleResult(String result){
-        String hello = result;
-        //List<Sensor> sensors = new ArrayList<>();
-/*
-         sensors = Sensor.mapIterator(this,sensors,result);
 
-         // todo when app opens again
-        // adapter.changeList(sensors);
-        // adapter.notifyDataSetChanged();
+        if (inForeground)
+            checkIfPressence(result);
+        else
+            sendSensorsToClient(result);
+    }
 
-        db = FirebaseFirestore.getInstance();
-        for (Sensor sensor :sensors) {
-            if (sensor.getPresence() && sensor.isPreviousPresence())
-                continue;
-            if (sensor.getPresence() && !sensor.isPreviousPresence()){
-                sensor.setPreviousPresence(true);
-                //FirebaseFunctions.putFirestoreStuff(db,true);
-                Log.d("FIRESTORE", "firestore : true ");
+    private void checkIfPressence(String result) {
+        sensors = Sensor.mapIteratorinForeground(this, sensors, result);
+        for (Sensor sensor : sensors) {
 
-                FirebaseFunctions.getToDeviceToken(db,this, sensor.getId());
-                //FirebaseFunctions.addNotifications(db, store.getCurrentToken());
-                sentTrigger = true;
+                sendNot26something("Motion Detected");
+                db = FirebaseFirestore.getInstance();
+                if (sensor.getPresence() && sensor.isPreviousPresence())
+                    continue;
+                if (sensor.getPresence() && !sensor.isPreviousPresence()){
+                    sensor.setPreviousPresence(true);
+                    Log.d("FIRESTORE", "firestore : true ");
+                    FirebaseFunctions.getToDeviceToken(db,this, sensor.getId());
 
+                } else if (!sensor.getPresence()&& sensor.isPreviousPresence()) {
+                    sensor.setPreviousPresence(false);
+                    Log.d("FIRESTORE", "firestore : false ");
 
-            } else if (!sensor.getPresence()&& sensor.isPreviousPresence()) {
-                //FirebaseFunctions.putFirestoreStuff(db,false);
-                sensor.setPreviousPresence(false);
-                Log.d("FIRESTORE", "firestore : false ");
-
-            }
+                }
 
         }
-  */
-        sendSensorsToClient(result);
+    }
+
+    public static void changeToForeground(){
+        inForeground = true;
+    }
+    public static void changeoutOfForeground(){
+        inForeground = false;
     }
 
     private void sendSensorsToClient(String msg){
@@ -294,7 +311,10 @@ public class BackgroundScanning extends IntentService implements APIcallback {
 
     @Override
     public void ApiRequestResultToDevice(String token, String sensorId) {
-
+        if (token !=null){
+            // todo remove comment to add notifications again
+            FirebaseFunctions.addNotifications(db, token,sensorId);
+        }
     }
 
     public static final String SENSOR_INFO = "SENSOR_INFO";

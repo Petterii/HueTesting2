@@ -29,6 +29,8 @@ public class Sensor {
     private boolean notifying;
     private boolean sound;
 
+    private Sensor(){};
+
     private Sensor(Context context, String pname, String pressence, String key, boolean on) {
         this.id = key;
         this.name = pname;
@@ -61,6 +63,17 @@ public class Sensor {
             }
         else{
            sensors = updateSensors(sensors,jsonString);
+        }
+        return sensors;
+    }
+
+    public static ArrayList<Sensor> mapIteratorinForeground(Context context,ArrayList<Sensor> sensors, String jsonString){
+        if (sensors == null || sensors.size() == 0) {
+            sensors = new ArrayList<>();
+            sensors = getFirstTimeSensors(context,sensors, jsonString);
+        }
+        else{
+            sensors = checkPresence(sensors,jsonString);
         }
         return sensors;
     }
@@ -164,7 +177,55 @@ public class Sensor {
         return sensors;
     }
 
+    // bad code... repeating. had other ideas to make it shorter for just presence. but changed my mind to have more options for future storing in firebase with notifications
+    public static ArrayList<Sensor> checkPresence(ArrayList<Sensor> sensors, String jsonString) {
+        boolean newlist = false;
+        if (sensors == null) {
+            newlist = true;
+            sensors = new ArrayList<>();
+        }
+        try {
+            JSONObject jsonObject = new JSONObject(jsonString);
 
+            Iterator<String> keyIterator = jsonObject.keys();
+
+            while (keyIterator.hasNext()) {
+                String key = keyIterator.next();
+                Sensor sensor = new Sensor();
+                for (Sensor s : sensors) {
+                    if (s.id.equals(key)){
+                        sensor = s;
+                        break;
+                    }
+                }
+                JSONObject l = jsonObject.getJSONObject(key);
+
+                String pname;
+                //  state = l.getString("state");
+                //  JSONObject stateObject = new JSONObject(state);
+                try {
+                    pname = l.getString("productname");
+                    JSONObject state = (JSONObject) l.get("state");
+                    String pressence = state.getString("presence");
+
+                    JSONObject config = (JSONObject) l.get("config");
+                    boolean on = config.getBoolean("on");
+
+
+                    sensor.update(pname,pressence,on);
+                    if (newlist)
+                        sensors.add(sensor);
+                }catch (Exception e){
+                    Log.d("API", "mapIterator: " + e);
+                }
+
+            }
+        }catch (Exception e){
+            Log.d("API", "mapIterator: catch Error" + e);
+        }
+
+        return sensors;
+    }
 
     public boolean getPresence() {
         return presence;

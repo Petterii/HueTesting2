@@ -32,6 +32,8 @@ public class NotificationHistoryAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+        if (history.size() > 3)
+            return  3;
         return history.size();
     }
 

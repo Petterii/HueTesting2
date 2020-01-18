@@ -160,6 +160,7 @@ public class FirebaseFunctions {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                Log.d("Firestore", "onFailure: what?" + e);
             }
         });
 

@@ -65,11 +65,11 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
         isTimerOn = false;
         isAllTimerOn = false;
         sentTrigger = false;
-
+        BackgroundScanning.changeoutOfForeground();
         createNotificationChannel();
 
 
-        sensor1registerReceiver();
+      //  sensor1registerReceiver();
 
         initTextFields();
         initAdapter();
@@ -95,28 +95,34 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
     private boolean isAllTimerOn;
 
     private void initButtons() {
-
+        final Button offAllButton;
+        offAllButton = (Button) findViewById(R.id.home_off_sensors);
         activationAllButton = (Button) findViewById(R.id.home_activate_sensors);
+
         activationAllButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (isAllTimerOn == false) {
                     isAllTimerOn = true;
-                    activationAllButton
+                    activationAllButton.setEnabled(false);
+                    offAllButton.setEnabled(true);
                     Intent intentService = new Intent(Intent.ACTION_SYNC,null,SensorActivationActivity.this,BackgroundScanning.class);
                     ContextCompat.startForegroundService(SensorActivationActivity.this,intentService);
                 }
             }
         });
 
-        Button offAllButton;
-        offAllButton = (Button) findViewById(R.id.home_off_sensors);
+
         offAllButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                offAllButton.setEnabled(false);
+                activationAllButton.setEnabled(true);
                BackgroundScanning.turnOff();
                isAllTimerOn = false;
             }
         });
 
+        activationAllButton.setEnabled(true);
+        offAllButton.setEnabled(false);
     }
 
     private void initAdapter(){
@@ -169,6 +175,33 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        sensor1registerReceiver();
+        BackgroundScanning.changeoutOfForeground();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+
+        BackgroundScanning.changeToForeground();
+        unregisterReceiver(sensorBackReceiver);
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+
+        super.onStop();
+    }
+
+    @Override
     public void ApiRequestResultTest(String response) {
         testingSensorCalls(response);
     }
@@ -188,7 +221,6 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
 
     private void testingSensorCalls(String respons){
 
-
     }
 
     @Override
@@ -198,23 +230,6 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
 
     }
 
-
-    class UpdateSensor extends TimerTask {
-        public void run() {
-            // todo change this to propper call... currently a test on specific sensor
-            Toast.makeText(SensorActivationActivity.this, "Well update", Toast.LENGTH_SHORT).show();
-            BridgeAPIcalls.apiGetCallSensorTest(SensorActivationActivity.this,
-                    "http://"+store.getBridgeIP().getInternalipaddress()+"/api/"+store.getBridgeIP().getKey()+"/sensors/24" , SensorActivationActivity.this);
-        }
-    }
-
-    class UpdateAllSensor extends TimerTask {
-        public void run() {
-
-            BridgeAPIcalls.apiGetCallSensor(SensorActivationActivity.this,
-                    "http://"+store.getBridgeIP().getInternalipaddress()+"/api/"+store.getBridgeIP().getKey()+"/sensors" , SensorActivationActivity.this);
-        }
-    }
     private void sensor1registerReceiver() {
         sensorBackReceiver = new SesnorBackReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -227,6 +242,7 @@ public class SensorActivationActivity extends AppCompatActivity implements APIca
         public void onReceive(Context context, Intent intent) {
             String sensorslongstring = intent.getStringExtra("sensorshere");
             ApiRequestResult(sensorslongstring);
+
             //Toast.makeText(SensorActivationActivity.this, "Well update", Toast.LENGTH_SHORT).show();
 
         }

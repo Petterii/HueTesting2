@@ -37,11 +37,11 @@ public class BridgeUser {
                     userKey = key;
                     // todo specifik user. if blabla this user?
                 }catch (Exception e){
-                    Log.d("API", "mapIterator: " + e);
+                   // Log.d("API", "mapIterator: " + e);
                 }
             }
         }catch (Exception e){
-            Log.d("API", "mapIterator: catch Error" + e);
+        //    Log.d("API", "mapIterator: catch Error" + e);
         }
 
     }
